@@ -48,7 +48,8 @@ class SetPasswordSerializer(serializers.Serializer):
         return validated_data
 
 
-class FollowSerializer(MyUserSerializer):
+class FollowSerializer(UserSerializer):
+    is_subscribed = SerializerMethodField(read_only=True)
     recipes = SerializerMethodField(read_only=True)
     recipes_count = SerializerMethodField(read_only=True)
 
@@ -56,6 +57,13 @@ class FollowSerializer(MyUserSerializer):
         model = User
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_is_subscribed(self, obj):
+        user = self.context['request'].user
+        return (user.is_authenticated
+                and Follow.objects.filter(
+                    user=user,
+                    author=obj).exists())
 
     def get_recipes(self, obj):
         limit = self.context['request'].GET.get('recipes_limit')
@@ -247,8 +255,22 @@ class FavoriteShoppingCartSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(FavoriteShoppingCartSerializer):
     class Meta:
         model = Favourite
+        fields = ('user', 'recipe')
+
+    def to_representation(self, instance):
+        return RecipeInfSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data
 
 
 class ShoppingCartSerializer(FavoriteShoppingCartSerializer):
-    class Meta(FavoriteSerializer.Meta):
+    class Meta:
         model = ShoppingList
+        fields = ('user', 'recipe')
+
+    def to_representation(self, instance):
+        return RecipeInfSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data

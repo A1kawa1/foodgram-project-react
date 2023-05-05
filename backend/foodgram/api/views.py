@@ -32,11 +32,11 @@ class MyUserViewSet(
     queryset = User.objects.all()
     serializer_class = MyUserSerializer
     pagination_class = LimitResultsSetPagination
-    permission_classes = (IsAuthenticated,)
 
     @action(
         detail=False,
-        methods=['GET']
+        methods=['GET'],
+        permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
         user = request.user
@@ -48,7 +48,8 @@ class MyUserViewSet(
 
     @action(
         detail=False,
-        methods=['POST']
+        methods=['POST'],
+        permission_classes=(IsAuthenticated,)
     )
     def set_password(self, request):
         user = request.user
@@ -66,7 +67,8 @@ class MyUserViewSet(
 
     @action(
         detail=True,
-        methods=['POST', 'DELETE']
+        methods=['POST', 'DELETE'],
+        permission_classes=(IsAuthenticated,)
     )
     def subscribe(self, request, pk):
         user = request.user
@@ -96,7 +98,8 @@ class MyUserViewSet(
 
     @action(
         detail=False,
-        methods=['GET']
+        methods=['GET'],
+        permission_classes=(IsAuthenticated,)
     )
     def subscriptions(self, request):
         user = request.user
