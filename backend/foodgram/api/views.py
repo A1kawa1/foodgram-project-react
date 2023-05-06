@@ -15,6 +15,7 @@ from api.serializers import (MyUserSerializer, FollowSerializer, TagSerializer,
                              SetPasswordSerializer)
 from api.permissions import IsAuthOrStaffOrReadOnly
 from api.paginations import LimitResultsSetPagination
+from api.filters import IngredientFilterSet, RecipeFilterSet
 from users.models import Follow, Favourite, ShoppingList
 from recipes.models import Tag, Ingredient, Recipe, IngredientRecipe
 from foodgram.settings import BASE_DIR
@@ -111,20 +112,22 @@ class MyUserViewSet(UserViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    paginator = None
+    pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend,)
-    paginator = None
+    filterset_class = IngredientFilterSet
+    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthOrStaffOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilterSet
     pagination_class = LimitResultsSetPagination
 
     def get_serializer_class(self):
