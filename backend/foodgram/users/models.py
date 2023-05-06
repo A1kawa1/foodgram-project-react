@@ -4,13 +4,22 @@ from rest_framework.validators import ValidationError
 
 
 class User(AbstractUser):
-    email = models.EmailField(
-        verbose_name='Почта',
-        max_length=254,
-        unique=True
-    )
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('first_name', 'last_name', 'username')
+
+    email = models.EmailField(
+        max_length=254,
+        verbose_name='Почта',
+        unique=True
+    )
+    first_name = models.CharField(
+        max_length=150,
+        verbose_name='Имя'
+    )
+    last_name = models.CharField(
+        max_length=150,
+        verbose_name='Фамилия'
+    )
 
 
 class Follow(models.Model):

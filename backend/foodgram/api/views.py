@@ -3,12 +3,12 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from django.http import HttpResponse
+from djoser.views import UserViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
-from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import mixins, status, viewsets
+from rest_framework import status, viewsets
 from api.serializers import (MyUserSerializer, FollowSerializer, TagSerializer,
                              RecipeInfSerializer, IngredientSerializer,
                              RecipeReadSerializer, RecipeWriteSerializer,
@@ -23,12 +23,7 @@ from foodgram.settings import BASE_DIR
 User = get_user_model()
 
 
-class MyUserViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet,
-):
+class MyUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = MyUserSerializer
     pagination_class = LimitResultsSetPagination
@@ -70,9 +65,9 @@ class MyUserViewSet(
         methods=['POST', 'DELETE'],
         permission_classes=(IsAuthenticated,)
     )
-    def subscribe(self, request, pk):
+    def subscribe(self, request, id):
         user = request.user
-        author = get_object_or_404(User, id=pk)
+        author = get_object_or_404(User, id=id)
 
         if request.method == 'POST':
             serializer = FollowSerializer(
@@ -116,12 +111,14 @@ class MyUserViewSet(
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    paginator = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend,)
+    paginator = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

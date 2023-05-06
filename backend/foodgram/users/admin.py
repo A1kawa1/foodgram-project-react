@@ -5,7 +5,7 @@ from users.models import (User, Follow,
 
 @register(User)
 class UserAdmin(ModelAdmin):
-    list_display = ('email', 'username', 'first_name', 'last_name')
+    list_display = ('email', 'username', 'first_name', 'last_name', 'password')
     list_filter = ('username', 'email')
 
 
