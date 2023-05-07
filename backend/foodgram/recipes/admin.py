@@ -1,6 +1,6 @@
-from django.contrib.admin import ModelAdmin, register, TabularInline
-from recipes.models import (Tag, Ingredient, Recipe,
-                            IngredientRecipe, IngredientRecipe)
+from django.contrib.admin import ModelAdmin, TabularInline, register
+
+from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
 
 
 @register(Tag)

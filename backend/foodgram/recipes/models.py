@@ -1,7 +1,6 @@
-from django.db import models
-from django.core.validators import RegexValidator, MinValueValidator
 from django.contrib.auth import get_user_model
-
+from django.core.validators import MinValueValidator, RegexValidator
+from django.db import models
 
 User = get_user_model()
 
@@ -30,6 +29,10 @@ class Tag(models.Model):
         unique=True
     )
 
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
     def __str__(self):
         return self.name
 
@@ -45,6 +48,10 @@ class Ingredient(models.Model):
         max_length=15
     )
 
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
     def __str__(self):
         return self.name
 
@@ -57,8 +64,7 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         verbose_name='Название',
-        max_length=200,
-        unique=True
+        max_length=200
     )
     image = models.ImageField(
         verbose_name='Картинка',
@@ -76,7 +82,7 @@ class Recipe(models.Model):
         Tag,
         verbose_name='Тэг'
     )
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
         validators=[
             MinValueValidator(
@@ -93,6 +99,8 @@ class Recipe(models.Model):
     class Meta:
         default_related_name = 'recipes'
         ordering = ('-pub_date',)
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
     def __str__(self):
         return self.name
@@ -110,6 +118,16 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
     )
-    amount = models.PositiveIntegerField(
-        verbose_name='Количество'
+    amount = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+        validators=[
+            MinValueValidator(
+                limit_value=1,
+                message='Недопустимое значение (меньше единицы)'
+            )
+        ]
     )
+
+    class Meta:
+        verbose_name = 'Ингредиент-рецепт'
+        verbose_name_plural = 'Ингредиенты-рецепты'

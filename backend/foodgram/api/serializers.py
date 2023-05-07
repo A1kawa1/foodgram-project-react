@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
-from djoser.serializers import UserSerializer, UserCreateSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
+from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import ValidationError
-from rest_framework import serializers
-from users.models import Follow, Favourite, ShoppingList
-from recipes.models import Tag, Ingredient, Recipe, IngredientRecipe
-from api.custom_field import Base64ImageField
+from users.models import Favourite, Follow, ShoppingList
 
+from api.custom_field import Base64ImageField
 
 User = get_user_model()
 
@@ -39,7 +39,6 @@ class SetPasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField()
 
     def update(self, instance, validated_data):
-        print(instance.password)
         if not check_password(validated_data['current_password'], instance.password):
             raise ValidationError('Неверный пароль')
         instance.set_password(validated_data['new_password'])
@@ -184,9 +183,17 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         if not all([field in data.keys() for field in self.Meta.fields]):
             raise serializers.ValidationError('Нет необходимых полей')
         ingredients = data.get('ingredients')
+        tags = data.get('tags')
         if not len(ingredients):
             raise serializers.ValidationError(
                 'Список ингридиентов пустой')
+        if not len(tags):
+            raise serializers.ValidationError(
+                'Список тегов пустой')
+        all_ingredients = [item['ingredient'] for item in ingredients]
+        if len(all_ingredients) != len(set(all_ingredients)):
+            raise serializers.ValidationError(
+                'Повторение ингридиентов')
         return data
 
     @staticmethod

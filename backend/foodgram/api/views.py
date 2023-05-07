@@ -1,25 +1,26 @@
 import os
+
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from django.http import HttpResponse
-from djoser.views import UserViewSet
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status, viewsets
-from api.serializers import (MyUserSerializer, FollowSerializer, TagSerializer,
-                             RecipeInfSerializer, IngredientSerializer,
-                             RecipeReadSerializer, RecipeWriteSerializer,
-                             SetPasswordSerializer)
-from api.permissions import IsAuthOrStaffOrReadOnly
-from api.paginations import LimitResultsSetPagination
-from api.filters import IngredientFilterSet, RecipeFilterSet
-from users.models import Follow, Favourite, ShoppingList
-from recipes.models import Tag, Ingredient, Recipe, IngredientRecipe
+from djoser.views import UserViewSet
 from foodgram.settings import BASE_DIR
+from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from users.models import Favourite, Follow, ShoppingList
 
+from api.filters import IngredientFilterSet, RecipeFilterSet
+from api.paginations import LimitResultsSetPagination
+from api.permissions import IsAuthOrStaffOrReadOnly
+from api.serializers import (FollowSerializer, IngredientSerializer,
+                             MyUserSerializer, RecipeInfSerializer,
+                             RecipeReadSerializer, RecipeWriteSerializer,
+                             SetPasswordSerializer, TagSerializer)
 
 User = get_user_model()
 
@@ -55,7 +56,6 @@ class MyUserViewSet(UserViewSet):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        print(request.data)
         return Response(
             {'detail': 'Пароль изменен'},
             status=status.HTTP_200_OK
@@ -148,7 +148,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user,
                 recipe=recipe
             )
-            print(create)
             if not create:
                 return Response(
                     {'errors': 'Рецепт уже добавлен'},
@@ -189,7 +188,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe__shopping_list__user=user
         ).values('ingredient').annotate(total=Sum('amount'))
 
-        file_path = os.path.join(BASE_DIR, 'shop', f'{user.username}.txt')
         data = ''
         for el in ingredients:
             ingredient = Ingredient.objects.get(id=el.get("ingredient"))
@@ -197,11 +195,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                       f'{el.get("total")} '
                       f'{ingredient.measurement_unit}\n'))
 
-        with open(file_path, 'w+', encoding='utf-8') as file:
-            file.writelines(data)
-
+        filename = f'{user.username}.txt'
         response = HttpResponse(data, content_type='text/plain')
-        response['Content-Disposition'] = f'attachment; filename={file_path}'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
 
     @action(
@@ -217,7 +213,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=user,
                 recipe=recipe
             )
-            print(create)
             if not create:
                 return Response(
                     {'errors': 'Рецепт уже добавлен'},

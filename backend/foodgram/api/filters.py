@@ -1,8 +1,8 @@
-from django_filters.rest_framework import FilterSet, filters
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from recipes.models import Ingredient, Recipe
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import FilterSet, filters
 
+from recipes.models import Ingredient, Recipe
 
 User = get_user_model()
 

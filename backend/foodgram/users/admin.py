@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
-from users.models import (User, Follow,
-                          Favourite, ShoppingList)
+
+from users.models import Favourite, Follow, ShoppingList, User
 
 
 @register(User)

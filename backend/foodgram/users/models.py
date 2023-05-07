@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from rest_framework.validators import ValidationError
 
 
@@ -20,6 +20,10 @@ class User(AbstractUser):
         max_length=150,
         verbose_name='Фамилия'
     )
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
 
 class Follow(models.Model):
@@ -46,6 +50,8 @@ class Follow(models.Model):
 
     class Meta:
         unique_together = ('user', 'author')
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
 
     def __str__(self):
         return f'{self.user} -> {self.author}'
@@ -66,6 +72,8 @@ class Favourite(models.Model):
     class Meta:
         default_related_name = 'favourites'
         unique_together = ('user', 'recipe')
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
 
     def __str__(self):
         return f'{self.user} -> {self.recipe}'
@@ -86,6 +94,8 @@ class ShoppingList(models.Model):
     class Meta:
         default_related_name = 'shopping_list'
         unique_together = ('user', 'recipe')
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Списки покупок'
 
     def __str__(self):
         return f'{self.user} -> {self.recipe}'
