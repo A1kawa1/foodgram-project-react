@@ -40,15 +40,16 @@ class Follow(models.Model):
 
     def save(self, *args, **kwargs):
         if self.user == self.author:
-            raise ValidationError('Подписка на самого себя')
-        if Follow.objects.filter(
-            user=self.user,
-            author=self.author
-        ).exists():
-            raise ValidationError('Вы уже подписанны на него')
+            return
         super().save(*args, **kwargs)
 
     class Meta:
+        # constraints = [
+        #     models.CheckConstraint(
+        #         name='not_same',
+        #         check=~models.Q(user=models.F('author'))
+        #     )
+        # ]
         unique_together = ('user', 'author')
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'

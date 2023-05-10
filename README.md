@@ -22,9 +22,7 @@
 git clone https://github.com/A1kawa1/foodgram-project-react.git
 ```
 
-```
-В директории foodgram-project-react/infra создать файл .env
-```
+В директории foodgram-project-react/infra создать файл .env  
 
 Заполнить .env  
 ```

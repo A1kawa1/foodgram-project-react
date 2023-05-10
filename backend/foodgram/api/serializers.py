@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import ValidationError
-from users.models import Favourite, Follow, ShoppingList
 
 from api.custom_field import Base64ImageField
+from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
+from users.models import Favourite, Follow, ShoppingList
 
 User = get_user_model()
 
@@ -180,8 +180,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                   'name', 'text', 'cooking_time')
 
     def validate(self, data):
-        if not all([field in data.keys() for field in self.Meta.fields]):
-            raise serializers.ValidationError('Нет необходимых полей')
         ingredients = data.get('ingredients')
         tags = data.get('tags')
         if not len(ingredients):

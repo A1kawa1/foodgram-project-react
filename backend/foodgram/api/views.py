@@ -6,13 +6,10 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from foodgram.settings import BASE_DIR
-from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from users.models import Favourite, Follow, ShoppingList
 
 from api.filters import IngredientFilterSet, RecipeFilterSet
 from api.paginations import LimitResultsSetPagination
@@ -21,6 +18,8 @@ from api.serializers import (FollowSerializer, IngredientSerializer,
                              MyUserSerializer, RecipeInfSerializer,
                              RecipeReadSerializer, RecipeWriteSerializer,
                              SetPasswordSerializer, TagSerializer)
+from recipes.models import Ingredient, IngredientRecipe, Recipe, Tag
+from users.models import Favourite, Follow, ShoppingList
 
 User = get_user_model()
 

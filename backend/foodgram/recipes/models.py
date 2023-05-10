@@ -17,7 +17,7 @@ class Tag(models.Model):
         unique=True,
         validators=[
             RegexValidator(
-                regex=r'^#[A-Fa-f0-9]{6}$',
+                regex=r'^#[a-f0-9]{6}$',
                 flags=0,
                 message='Недопустимый цвет'
             )
@@ -71,7 +71,8 @@ class Recipe(models.Model):
         upload_to='recipes/'
     )
     text = models.TextField(
-        verbose_name='Описание'
+        verbose_name='Описание',
+        unique=True
     )
     ingredients = models.ManyToManyField(
         Ingredient,
