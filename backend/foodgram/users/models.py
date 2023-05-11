@@ -38,18 +38,18 @@ class Follow(models.Model):
         on_delete=models.CASCADE
     )
 
-    def save(self, *args, **kwargs):
-        if self.user == self.author:
-            return
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.user == self.author:
+    #         return
+    #     super().save(*args, **kwargs)
 
     class Meta:
-        # constraints = [
-        #     models.CheckConstraint(
-        #         name='not_same',
-        #         check=~models.Q(user=models.F('author'))
-        #     )
-        # ]
+        constraints = [
+            models.CheckConstraint(
+                name='not_same',
+                check=~models.Q(user=models.F('author'))
+            )
+        ]
         unique_together = ('user', 'author')
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'

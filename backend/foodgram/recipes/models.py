@@ -19,7 +19,7 @@ class Tag(models.Model):
             RegexValidator(
                 regex=r'^#[a-f0-9]{6}$',
                 flags=0,
-                message='Недопустимый цвет'
+                message='Недопустимый цвет (только нижний регистр)'
             )
         ]
     )
