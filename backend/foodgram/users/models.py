@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -38,18 +39,13 @@ class Follow(models.Model):
     )
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                name='Проверка уникальности подписки',
-                fields=('user', 'author')
-            ),
-            models.CheckConstraint(
-                name='Проверка подписки на самого себя',
-                check=~models.Q(user=models.F('author'))
-            )
-        ]
+        unique_together = ('user', 'author')
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+
+    def clean(self):
+        if self.user == self.author:
+            raise ValidationError('Подписка на самого себя')
 
     def __str__(self):
         return f'{self.user} -> {self.author}'
